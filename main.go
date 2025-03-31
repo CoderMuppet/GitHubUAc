@@ -27,14 +27,23 @@ func main() {
 		return
 	}
 
+	repoName := events[0].Repo.Name
 	eventPushCount := 0
-	// Iterate over the array of events
-	for _, event := range events {
-		if event.Type == "PushEvent" {
-			eventPushCount++
-
-		}
-	}
 	fmt.Println("Output:")
-	fmt.Printf("- Pushed %d commits to %s\n", eventPushCount, events[0].Repo.Name)
+	// Iterate over the array of events
+	for i, event := range events {
+		if events[i].Repo.Name == repoName {
+			if event.Type == "PushEvent" {
+				eventPushCount++
+			}
+		} else {
+			if eventPushCount > 0 {
+				fmt.Printf("- Pushed %d commits to %s\n", eventPushCount, events[i-1].Repo.Name)
+			}
+			eventPushCount = 0
+			repoName = events[i].Repo.Name
+		}
+
+	}
+
 }
